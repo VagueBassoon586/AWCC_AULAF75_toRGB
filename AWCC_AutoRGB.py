@@ -14,8 +14,7 @@ import hid
 # Implementation in this file was written independently.
 
 DatabasePath = Path(os.path.expandvars(r"%LOCALAPPDATA%\Alienware\Alienware Command Center\FX\FXRepository.db"))
-DefaultPresetId = 22
-DefaultGameId = "B5797A5D-4EE5-42EE-BE08-01A534B22FBD"
+DefaultColorPath = Path(__file__).with_name("default.txt")
 
 VendorId = 0x258A
 ProductId = 0x010C
@@ -117,13 +116,18 @@ def GetAwccLibrary():
 
 
 def GetDefaultColor():
-	with OpenDatabase() as Connection:
-		Preset = Connection.execute("SELECT PresetColor FROM GamePresets WHERE PresetId = ? AND GameID = ? LIMIT 1", (DefaultPresetId, DefaultGameId)).fetchone()
+	if not DefaultColorPath.exists():
+		raise FileNotFoundError(f"Default RGB file not found: {DefaultColorPath}")
 
-		if Preset is None or Preset["PresetColor"] is None:
-			raise RuntimeError(f"AWCC fallback preset {DefaultPresetId} was not found.")
+	Color = DefaultColorPath.read_text(encoding="utf-8").strip().upper()
 
-		return GetHexColor(Preset["PresetColor"])
+	if Color.startswith("#"):
+		Color = Color[1:]
+
+	if not re.fullmatch(r"[0-9A-F]{6}", Color):
+		raise ValueError(f"Invalid default RGB colour in {DefaultColorPath}. Expected RRGGBB or #RRGGBB.")
+
+	return f"#{Color}"
 
 
 def GetRunningProcesses():
@@ -391,7 +395,7 @@ if __name__ == "__main__":
 		print(f"{Game['Name']} ({Process['ProcessName']}) -> {Color}")
 	else:
 		Color = GetDefaultColor()
-		print(f"No matching AWCC app is running -> Preset_2 -> {Color}")
+		print(f"No matching AWCC app is running -> default.txt -> {Color}")
 
 	Changed = ChangeRGB(Color)
 	print("RGB changed." if Changed else "RGB already matches.")
