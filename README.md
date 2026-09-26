@@ -8,6 +8,14 @@ This script assume you have Python 3, PowerShell installed on your machine
 
 This script worked successfully with AWCC version 6.14.54.0 (Official Build)
 
+## Usesage
+
+Make sure you have predefined applications profile in AWCC
+
+For the default RGB profile (The colour that the keyboard will revert back to when no other application will no predefined profile is running):
+- Open default.txt and add a colour in there, make sure it is in HEX
+- For example: "#FF5A00," "#FFFFFF," etc.
+
 ## Safety
 
 The AWCC SQLite database is opened only for reading. The scripts do not modify FXRepository.db.
