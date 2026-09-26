@@ -8,7 +8,7 @@ This script assume you have Python 3, PowerShell installed on your machine
 
 This script worked successfully with AWCC version 6.14.54.0 (Official Build)
 
-## Usesage
+## Usage
 
 Make sure you have predefined applications profile in AWCC
 
